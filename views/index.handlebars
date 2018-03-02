@@ -1,0 +1,17 @@
+<div class="jumbotron">
+  <h1 class="display-4">Hello, world!</h1>
+  <p class="lead">Below are polls hosted by this App.</p>
+  <hr class="my-4">
+  <p>Select a poll to see the results and vote, or sign-in to make a new poll.</p>
+</div>
+{{#each polls}}
+  <a class="editLink" href="/allpolls/{{id}}">
+    <div class="card card-body mb-2">
+      <h4>{{title}}</h4>
+      <p>{{options}}</p>
+
+    </div>
+  </a>
+{{else}}
+  <p>No Poll listed</p>
+{{/each}}

@@ -1,0 +1,183 @@
+<div class="cardgray card-body">
+  <div class="row">
+    <div class="col-4">
+      <form action="/polls/voted" method="post" onsubmit="return validateForm()">
+        <input type="hidden" name="_method" value="PUT">
+        <h3 class="paraTitle">{{poll.title}}</h3>
+        <input type="text" class="form-control3" name="pollIDdsda" id="secret1" value="{{poll._id}}">
+        
+        <script>
+          $(document).ready(function() {
+            var fields = "{{poll.options}}";
+            var fieldsArray = fields.split(",");
+            var wrapper = $(".form-group1");
+            var addButton = $("#addInputField");
+
+            let idArray = [];
+            var x = 0;
+            for(var y = 0; y < fieldsArray.length; y++){
+              $(wrapper).append('<p class="para"><input type="radio" name="votename" id="'+fieldsArray[y]+'" value="'+fieldsArray[y]+'"><label for="'+fieldsArray[y]+'" class="inputLabelClass" for="'+y+'">'+fieldsArray[y]+'</label></p>');
+              idArray.push(fieldsArray[y]);
+            }
+          // });
+            
+          // --------------------------------------- ADD New Option ------------------------------------------------- //
+            
+            var max_fields      = 1;
+            var wrapper2        = $(".container2");
+            var add_button2     = $(".add_form_field");
+
+            var surl = "{{poll._id}}";
+            var splink = `/polls/voted/${surl}?_method=PUT`;
+
+            var w = 0;
+            $(add_button2).click(function(e){
+              e.preventDefault();
+              $(this).css('display', 'none');
+              if(w < max_fields){
+                w++;
+                $(wrapper2).append('<div><input type="text" name="newvotename" class="yehey" id="input3" required/></div>');
+              } else{
+                alert('You Alredy Added a new option field');
+              }
+              $(this).closest("form").attr("action", splink);
+              
+              //disable input radio
+              for(var c = 0; c < idArray.length; c++){
+                document.getElementById(idArray[c]).disabled = true;
+              }
+            })
+
+
+          // --------------------------------------- End Add New Option ----------------------------------------------// 
+          
+
+          });
+          
+        </script>
+        
+        
+
+        <div class="form-group1">
+        </div>
+        <div class="container2"></div>
+        <button class="add_form_field mt-2" class="sirit">Add New Option&nbsp; <span style="font-size:16px; font-weight:bold;">+ </span></button>
+        <br />
+        <button type="submit" name="submit_id" class="btn btn-info mt-3" id="addInputField">VOTE</button>
+      </form>
+
+      <!--------------- Validate Form Script -------------------------->
+      <script>
+        function validateForm() {
+          var radios = document.getElementsByName("votename");
+          var inputz = document.getElementById("input3");
+          var formValid = false;
+
+          var i = 0;
+          while(!formValid && i < radios.length){
+            if(radios[i].checked || inputz) formValid = true;
+            i++;
+          }
+          if(!formValid) alert("You must choose which option to vote for.");
+          return formValid;
+        }
+        
+
+        var urlea = window.location.href;
+        var shareTitle = "{{poll.title}}";
+      </script>
+      <!------------- End Validate Form Script ------------------------>
+      <button type="submit" href="#" class="btn btn-block shareit-twitter-colors mt-4" onclick="window.open('http://twitter.com/share?url='+encodeURIComponent(urlea)+'&text='+encodeURIComponent(`${shareTitle} | voting -`), '', 'left=0,top=0,width=550,height=450,personalbar=0,toolbar=0,scrollbars=0,resizable=0')"><i class="fa fa-twitter"></i> Share on Twitter</button>
+      <div class="text-center mt-4">- OR -</div>
+      <form method="post" action="/polls/{{poll.id}}?_method=DELETE">
+        <input type="hidden" name="_method" value="DELETE">
+        <input type="submit" class="btn btn-danger btn-block mt-4" value="Delete this Poll">
+      </form>
+    </div>
+    <div class="col-8">
+      <canvas class="" id="myChart" width="200" height="200"></canvas>
+      <script>
+      
+      const thisVoteID = "{{poll._id}}";
+
+      fetch(`http://localhost:3000/api/votes/${thisVoteID}`)
+        .then((res) => {
+          return res.json();
+        })
+        .then(data => {
+          const pollTitle = "{{poll.title}}";
+
+          let characterVoteName = [];
+          data.forEach(function(character){
+          characterVoteName.push([character.votename]);
+          });
+
+          const reducer = (accumulator, currentValue) => accumulator + currentValue;
+
+          let characterPoints = [];
+          data.forEach(function(character){
+          characterPoints.push([character.points].reduce(reducer)); 
+          });
+
+          var finalPoints = characterPoints.map((task) => task.reduce(reducer));
+
+
+
+          // ---------------------   START OF CHART ---------------------------------------------
+
+          let myChart = document.getElementById('myChart').getContext('2d');
+
+          let massPopChart = new Chart(myChart, {
+            type:'pie',
+            data:{
+              labels: characterVoteName,
+              datasets:[{
+                label:'Population',
+                data: finalPoints,
+                //backgroundColor:'green'
+                backgroundColor:[
+                  'rgba(255, 99, 135, 0.6)',
+                  'rgba(54, 162, 235, 0.6)',
+                  'rgba(255, 206, 86, 0.6)',
+                  'rgba(75, 192, 192, 0.6)',
+                  'rgba(153, 102, 255, 0.6)',
+                  'rgba(255, 159, 64, 0.6)',
+                  'rgba(78, 227, 153, 0.6)',
+                  'rgba(149, 156, 153, 0.6)',
+                  'rgba(196, 124, 222, 0.6)',
+                  'rgba(227, 78, 78, 0.6)'
+                ]
+              }]
+            },
+            options:{
+              tooltips:{
+                titleFontSize: 20,
+                bodyFontSize: 20,
+                xPadding: 10,
+                yPadding: 10
+              },
+              title:{
+                display:true,
+                text: pollTitle,
+                fontSize:25
+              },
+              legend:{
+                display:true,
+                position:'bottom',
+                labels:{
+                  fontSize: 20
+                }
+              }
+            }
+          });
+
+
+          // -----------------------------------------------------------------------------------
+
+        })
+      
+    </script>
+
+    </div>
+  </div>
+</div>

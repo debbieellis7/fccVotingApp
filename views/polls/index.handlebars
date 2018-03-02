@@ -1,0 +1,11 @@
+{{#each polls}}
+  <a class="editLink" href="/polls/{{id}}">
+    <div class="card card-body mb-2">
+      <h4>{{title}}</h4>
+      <p>{{options}}</p>
+      
+    </div>
+  </a>
+{{else}}
+  <p>No Poll listed</p>
+{{/each}}
