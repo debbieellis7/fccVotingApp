@@ -56,7 +56,7 @@
       
       const thisVoteID = "{{poll._id}}";
 
-      fetch(`http://localhost:3000/api/votes/${thisVoteID}`)
+      fetch(`https://secure-meadow-57507.herokuapp.com/api/votes/${thisVoteID}`)
         .then((res) => {
           return res.json();
         })
